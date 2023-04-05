@@ -1,10 +1,10 @@
 # GitLab Wiki Table of Contents Generator
 
-GitLabのWikiリポジトリをクローンし、Markdown形式の目次を生成するGo製のコマンドラインツールです。
+A command-line tool in Go that clones a GitLab Wiki repository and generates a table of contents in Markdown format.
 
-## インストール方法
+## Installation
 
-リポジトリをクローンし、ビルドしてください。
+Clone the repository and build the tool:
 
 ```sh
 git clone https://github.com/nwiizo/wiki-toc-generator.git
@@ -12,19 +12,20 @@ cd wiki-toc-generator
 go build -o wiki-toc-generator main.go
 ```
 
-## 使い方
+## Usage
 
-以下のコマンドで目次を生成できます。
+Generate the table of contents using the following command:
+
 ```sh
 ./wiki-toc-generator <wikiRepoURL>
 ```
 
-<wikiRepoURL>には、GitLab WikiリポジトリのURLを指定してください。
+Replace `<wikiRepoURL>` with the URL of your GitLab Wiki repository.
 
-### 例
+### Example
 
 ```sh
 ./wiki-toc-generator https://gitlab.com/yourusername/yourproject.wiki.git
 ```
 
-目次が生成されたら、必要に応じてWikiページにコピーしてください。
+Once the table of contents is generated, copy it to your Wiki page as needed.
