@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -19,7 +18,8 @@ func main() {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			wikiRepoURL := args[0]
-			cloneDir, err := ioutil.TempDir("", "cloned_wiki")
+			// ioutil.TempDirの代わりにos.MkdirTempを使用
+			cloneDir, err := os.MkdirTemp("", "cloned_wiki")
 			if err != nil {
 				fmt.Printf("Error creating temporary directory: %v\n", err)
 				return
@@ -49,6 +49,7 @@ func main() {
 	}
 }
 
+// cloneWiki は、Gitリポジトリをクローンするための関数です。
 func cloneWiki(repoURL, destDir string) error {
 	cmd := exec.Command("git", "clone", repoURL, destDir)
 	cmd.Stdout = os.Stdout
@@ -56,8 +57,17 @@ func cloneWiki(repoURL, destDir string) error {
 	return cmd.Run()
 }
 
+// generateTOC は、クローンされたディレクトリから目次を生成するための関数です。
+// この関数は、与えられたディレクトリ内のすべてのマークダウンファイルを探索し、
+// それらの相対パスを使用して整形された目次を作成します。
+// さらに、目次のエントリは、ファイルの階層に応じてインデントされます。
+// これにより、目次が視覚的に整理され、ファイルの構造が明確になります。
+// 最後に、生成された目次は、Markdownリンクの形式で返されます。
 func generateTOC(dir string) (string, error) {
+	// ファイルの相対パスを格納するスライス
 	var paths []string
+
+	// ディレクトリを再帰的に探索し、.mdファイルの相対パスを取得
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -83,9 +93,13 @@ func generateTOC(dir string) (string, error) {
 		return "", err
 	}
 
+	// パスを辞書順にソート
 	sort.Strings(paths)
 
+	// 目次を作成するための strings.Builder を初期化
 	var toc strings.Builder
+
+	// パスのスライスをイテレートし、目次のエントリを追加
 	for _, relPath := range paths {
 		depth := strings.Count(relPath, string(os.PathSeparator))
 		indent := ""
@@ -97,5 +111,6 @@ func generateTOC(dir string) (string, error) {
 		toc.WriteString(fmt.Sprintf("%s* [[%s|%s]]\n", indent, title, relPathWithoutExt))
 	}
 
+	// 生成された目次を返す
 	return toc.String(), nil
 }
