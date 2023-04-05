@@ -1,0 +1,18 @@
+project_name: wiki-toc-generator
+build:
+  main: main.go
+  ldflags:
+    - -s -w
+  env:
+    - CGO_ENABLED=0
+archives:
+  - format: binary
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+snapshot:
+  name_template: "{{ .ProjectName }}_SNAPSHOT_{{ .Commit }}_{{ .Os }}_{{ .Arch }}"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
