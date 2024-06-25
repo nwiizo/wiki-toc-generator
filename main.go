@@ -19,6 +19,8 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			wikiRepoURL := args[0]
 			// ioutil.TempDirの代わりにos.MkdirTempを使用
+			// https://golang.org/pkg/io/ioutil/#TempDir
+			// https://golang.org/pkg/os/#MkdirTemp
 			cloneDir, err := os.MkdirTemp("", "cloned_wiki")
 			if err != nil {
 				fmt.Printf("Error creating temporary directory: %v\n", err)
@@ -39,11 +41,13 @@ func main() {
 			}
 
 			fmt.Println("Table of Contents:")
+			// tocを表示する前に、tocの内容をファイルに書き込む
 			fmt.Println(toc)
 		},
 	}
 
 	if err := rootCmd.Execute(); err != nil {
+		fmt.Println("Error executing command")
 		fmt.Println(err)
 		os.Exit(1)
 	}
